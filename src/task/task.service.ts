@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { Task } from './Models/task';
 
 @Injectable()
@@ -11,33 +11,43 @@ export class TaskService {
    ];
 
    fetchAll(): Task[]{
-    return this.tasks
+    return this.tasks;
    }
 
-   fetchATask(id: number): Task | string{
+   fetchATask(id: number): Task{
     let index = this.tasks.findIndex(t => t.id === id);
     if(index<1){
-      return "task doesn't exist";
+      throw new NotFoundException("task doesn't exist");
     }
     return this.tasks[index];
   }
  
    createTask(task: Task): string{
      this.tasks.push(task);
-     return `task ${task.id} has been created`
+     return `task ${task.id} has been created`;
    }
 
    updateTask(id: number, task: Task): string{
+    /*
+    const data = this.tasks.map(task =>{
+      task.id === id ? { ... task, ...this.updateTask}:task;
+    })
+    return data;
+    */
     let index = this.tasks.findIndex(t => t.id === id);
     if (index !== -1){
       this.tasks[index] = task;
     }else if(index <1){
-      return "task doesn't exist"
+      return "task doesn't exist";
     }
     return `task ${id} has been updated`;
   }
 
   deleteTask(id: number): string{
+    /*
+    const data = this.tasks.map((task) => this.task.id !== id)
+    return data
+    */
     let index = this.tasks.findIndex(t => t.id === id);
     if (index !== -1){
       this.tasks.splice(index,1);
